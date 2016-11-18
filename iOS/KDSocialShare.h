@@ -9,6 +9,7 @@
 
 #import "RCTBridge.h"
 #import "RCTBridgeModule.h"
+#import <MessageUI/MessageUI.h>
 
 @interface KDSocialShare : NSObject <RCTBridgeModule>
 

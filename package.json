@@ -40,5 +40,6 @@
       "email": "kim.doefler@gmail.com"
     }
   ],
+  "main": "index.ios.js",
   "license": "MIT"
 }
