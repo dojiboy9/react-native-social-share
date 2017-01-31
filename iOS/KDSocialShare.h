@@ -7,8 +7,8 @@
 //
 @import UIKit;
 
-#import "RCTBridge.h"
-#import "RCTBridgeModule.h"
+#import <React/RCTBridge.h>
+#import <React/RCTBridgeModule.h>
 #import <MessageUI/MessageUI.h>
 
 @interface KDSocialShare : NSObject <RCTBridgeModule>
