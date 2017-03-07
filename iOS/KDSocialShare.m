@@ -18,8 +18,8 @@
 
 @implementation KDSocialShare
 {
-  RCTPromiseResolveBlock _resolve;
-  RCTPromiseRejectBlock _reject;
+  RCTResponseSenderBlock _callback;
+
 }
 
 // Expose this module to the React Native bridge
@@ -34,17 +34,16 @@ RCT_EXPORT_MODULE()
                  didFinishWithResult:(MessageComposeResult)result
 {
   if (result == MessageComposeResultCancelled){
-    _resolve(@NO);
+    _callback(@[@"cancelled"]);
   }
   else if (result == MessageComposeResultSent){
-    _resolve(@YES);
+    _callback(@[@"success"]);
   }
   else{
-    _reject(@"error_in_sending_message", @"Error sending text message.", nil);
+    _callback(@[@"error"]);
   }
-  
-  _resolve = nil;
-  _reject = nil;
+
+  _callback = nil;
 
   UIViewController *vc = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
   [vc dismissViewControllerAnimated:YES completion:nil]; //<---- This line
@@ -52,8 +51,7 @@ RCT_EXPORT_MODULE()
 
 - (void)share:(NSDictionary *)options
         service:(NSString *)serviceType
-        resolver:(RCTPromiseResolveBlock)resolve
-        rejecter:(RCTPromiseRejectBlock)reject
+        callback: (RCTResponseSenderBlock)callback
 {
   NSLog(@"Sharing with: %@", serviceType);
   SLComposeViewController *composeCtl = [SLComposeViewController composeViewControllerForServiceType:serviceType];
@@ -79,11 +77,11 @@ RCT_EXPORT_MODULE()
   [composeCtl setCompletionHandler:^(SLComposeViewControllerResult result) {
     if (result == SLComposeViewControllerResultDone) {
       // Sent
-      resolve(@YES);
+      callback(@[@"success"]);
     }
     else if (result == SLComposeViewControllerResultCancelled){
       // Cancelled
-      resolve(@NO);
+      callback(@[@"cancelled"]);
     }
   }];
 
@@ -94,33 +92,30 @@ RCT_EXPORT_MODULE()
 #pragma mark - Public Methods
 
 RCT_EXPORT_METHOD(shareOnFacebook:(NSDictionary *)options
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  callback: (RCTResponseSenderBlock)callback)
 {
-  [self share:options service:SLServiceTypeFacebook resolver:resolve rejecter:reject];
+  [self share:options service:SLServiceTypeFacebook callback:callback];
 }
 
 RCT_EXPORT_METHOD(shareOnMessenger:(NSDictionary *)options
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  callback: (RCTResponseSenderBlock)callback)
 {
-  [self share:options service:@"com.facebook.Messenger.ShareExtension" resolver:resolve rejecter:reject];
+  [self share:options service:@"com.facebook.Messenger.ShareExtension" callback:callback];
 }
 
 
 RCT_EXPORT_METHOD(tweet:(NSDictionary *)options
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  callback: (RCTResponseSenderBlock)callback)
 {
-  [self share:options service:SLServiceTypeTwitter resolver:resolve rejecter:reject];
+  [self share:options service:SLServiceTypeTwitter callback:callback];
 }
 
 RCT_EXPORT_METHOD(sendText:(NSDictionary *)options
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  callback: (RCTResponseSenderBlock)callback)
 {
   if (![MFMessageComposeViewController canSendText]) {
-    reject(@"no_message_services", @"Message services are not available.", nil);
+    callback(@[@"error"]);
+    return;
   }
 
   NSString *message = @"";
@@ -136,15 +131,14 @@ RCT_EXPORT_METHOD(sendText:(NSDictionary *)options
   }
 
   // ignore the image and image link
-  
+
   MFMessageComposeViewController *messageController = [[MFMessageComposeViewController alloc] init];
   messageController.messageComposeDelegate = self;
   [messageController setBody:message];
-  
+
   // Present message view controller on screen
-  
-  _resolve = resolve;
-  _reject = reject;
+
+  _callback = callback;
 
   UIViewController *vc = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
   [vc presentViewController:messageController animated:YES completion:nil];
