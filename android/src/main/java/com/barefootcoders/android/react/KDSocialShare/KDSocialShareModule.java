@@ -75,6 +75,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
         return;
       }
 
+      shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       reactContext.startActivity(shareIntent);
     } catch (Exception ex) {
       callback.invoke("error", ex.getMessage());
@@ -102,6 +103,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
         shareIntent.setType("text/plain");
         shareIntent.setPackage("com.facebook.orca");
 
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         reactContext.startActivity(shareIntent);
       } else {
         callback.invoke("error", "Messenger not installed");
@@ -126,6 +128,8 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
 
       Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"));
       intent.putExtra("sms_body", message);
+
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       reactContext.startActivity(intent);
     } catch (Exception ex) {
       callback.invoke("error", ex.getMessage());
