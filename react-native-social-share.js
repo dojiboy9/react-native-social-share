@@ -12,9 +12,9 @@ const { KDSocialShare } = NativeModules;
 
 const makeCallback = (resolve, reject) => (result, message) => {
   if (result === 'error') {
-    reject(message);
+    reject(message || result);
   } else {
-    resolve(result);
+    resolve(result === 'success');
   }
 }
 
