@@ -48,7 +48,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
         tweetViaWebPopup(shareText);
       }
     } catch (Exception ex) {
-      callback.invoke("error");
+      callback.invoke("error", ex.getMessage());
     }
   }
 
@@ -77,7 +77,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
 
       reactContext.startActivity(shareIntent);
     } catch (Exception ex) {
-      callback.invoke("error");
+      callback.invoke("error", ex.getMessage());
     }
   }
 
@@ -107,7 +107,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
         callback.invoke("error", "Messenger not installed");
       }
     } catch (Exception ex) {
-      callback.invoke("error");
+      callback.invoke("error", ex.getMessage());
     }
   }
 
@@ -128,7 +128,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
       intent.putExtra("sms_body", message);
       reactContext.startActivity(intent);
     } catch (Exception ex) {
-      callback.invoke("error");
+      callback.invoke("error", ex.getMessage());
     }
   }
 
