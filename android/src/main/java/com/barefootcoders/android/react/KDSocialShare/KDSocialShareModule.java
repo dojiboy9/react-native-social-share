@@ -77,6 +77,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
 
       shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       reactContext.startActivity(shareIntent);
+      callback.invoke("unknown");
     } catch (Exception ex) {
       callback.invoke("error", ex.getMessage());
     }
@@ -105,6 +106,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
 
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         reactContext.startActivity(shareIntent);
+        callback.invoke("unknown");
       } else {
         callback.invoke("error", "Messenger not installed");
       }
@@ -131,6 +133,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
 
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       reactContext.startActivity(intent);
+      callback.invoke("unknown");
     } catch (Exception ex) {
       callback.invoke("error", ex.getMessage());
     }
