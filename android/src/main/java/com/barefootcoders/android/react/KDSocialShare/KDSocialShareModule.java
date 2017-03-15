@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.provider.Telephony;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -86,7 +87,7 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void shareOnMessenger(ReadableMap options, Callback callback) {
     try {
-      if (doesPackageExist("com.facebook.katana")) {
+      if (doesPackageExist("com.facebook.orca")) {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
 
@@ -130,6 +131,12 @@ public class KDSocialShareModule extends ReactContextBaseJavaModule {
 
       Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"));
       intent.putExtra("sms_body", message);
+
+      String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(reactContext);
+      if (defaultSmsPackageName != null)
+      {
+        intent.setPackage(defaultSmsPackageName);
+      }
 
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       reactContext.startActivity(intent);
